@@ -2,6 +2,8 @@ import warnings
 warnings.simplefilter("ignore", UserWarning)
 
 import argparse
+import os
+
 import cv2 as cv
 import math
 import matplotlib.pyplot as plt
@@ -125,9 +127,11 @@ def create_train_test_2(points):
     return train_x, train_y, test_x, position
 
 
-def main():
+def main(opt):
     # points = get_datas('samples/example_2/Results_elevation_ex_2.csv')
-    points = get_datas('samples/example_1/Results_elevation_ex_1.csv')
+    # points = get_datas(f'samples{os.sep}example_1{os.sep}Results_elevation_ex_1.csv')
+    path = f"{os.sep}".join(opt.path_to_data.split('/'))
+    points = get_datas(path)
     number_of_clusters = 3
     calculate_distance(points)
 
@@ -211,9 +215,8 @@ if __name__ == "__main__":
     print('start')
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('--path_to_data', type=str, default="/samples/Results_elevation_ex_1.csv",
+    parser.add_argument('--path_to_data', type=str, default=f"{os.sep}samples{os.sep}Results_elevation_ex_1.csv",
                         help='Путь к файлу с высотами')
 
-    parser.parse_args()
-    main()
+    main(parser.parse_args())
     print('done.')
