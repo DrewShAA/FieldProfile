@@ -76,10 +76,12 @@ def create_matrix(points):
     p.show()
 
     matrix_of_list = np.full((len(latitudes), len(longitude)), fill_value=None)
-    matrix_in_m = np.full((len(latitudes), len(longitude)), fill_value=None)
+    matrix_in_m = np.zeros((len(latitudes), len(longitude), 3))
     for point in points:
         matrix_of_list[latitudes.index(point.x)][longitude.index(point.y)] = (point.x, point.y, point.z)
-        matrix_in_m[latitudes.index(point.x)][longitude.index(point.y)] = [point.x_m, point.y_m, point.z]
+        matrix_in_m[latitudes.index(point.x)][longitude.index(point.y)][0] = point.x_m
+        matrix_in_m[latitudes.index(point.x)][longitude.index(point.y)][1] = point.y_m
+        matrix_in_m[latitudes.index(point.x)][longitude.index(point.y)][2] = point.z
         list_of_list.append((point.x_m, point.y_m, point.z))
 
     # print(list_of_list)
