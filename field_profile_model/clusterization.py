@@ -508,5 +508,15 @@ def main():
     print(res)
 
 
+def dist_pairwise(matrix_in_m):
+    a = matrix_in_m.copy().reshape(-1, 2)
+    b = a.copy()
+    P = np.add.outer(np.sum(a**2, axis=1), np.sum(b**2, axis=1))
+    N = np.dot(a, b.T)
+    res = np.sqrt(P - 2 * N)
+    avg_dist = sum([el for row in res for el in row]) / (res.shape[0] * res.shape[1])
+
+    return avg_dist
+
 if __name__ == '__main__':
     main()
