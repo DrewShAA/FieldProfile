@@ -21,22 +21,22 @@ if Path(__file__).absolute().parents[0].as_posix() not in sys.path:
     sys.path.append(Path(__file__).absolute().parents[0].as_posix())
 
 
-def dbscan_cluster(X, shape_m):
-
+def dbscan_cluster(X, shape_m, eps):
+    #  0.8301886792452831
     # n_neighbors = 5 as kneighbors function returns distance of point to itself (i.e. first column will be zeros)
-    nbrs = NearestNeighbors(n_neighbors=100).fit(X)
-    # Find the k-neighbors of a point
-    neigh_dist, neigh_ind = nbrs.kneighbors(X)
-    # sort the neighbor distances (lengths to points) in ascending order
-    # axis = 0 represents sort along first axis i.e. sort along row
-    sort_neigh_dist = np.sort(neigh_dist, axis=0)
-
-    k_dist = sort_neigh_dist[:, 4]
-    plt.plot(k_dist)
-    plt.axhline(y=2.5, linewidth=1, linestyle='dashed', color='k')
-    plt.ylabel("k-NN distance")
-    plt.xlabel("Sorted observations (4th NN)")
-    plt.show()
+    # nbrs = NearestNeighbors(n_neighbors=8).fit(X)
+    # # Find the k-neighbors of a point
+    # neigh_dist, neigh_ind = nbrs.kneighbors(X)
+    # # sort the neighbor distances (lengths to points) in ascending order
+    # # axis = 0 represents sort along first axis i.e. sort along row
+    # sort_neigh_dist = np.sort(neigh_dist, axis=0)
+    #
+    # k_dist = sort_neigh_dist[:, 4]
+    # plt.plot(k_dist)
+    # plt.axhline(y=2.5, linewidth=1, linestyle='dashed', color='k')
+    # plt.ylabel("k-NN distance")
+    # plt.xlabel("Sorted observations (4th NN)")
+    # plt.show()
 
     # #############################################################################
 
@@ -45,7 +45,7 @@ def dbscan_cluster(X, shape_m):
 
     # #############################################################################
     # Compute DBSCAN
-    db = DBSCAN(eps=42, min_samples=6).fit(X.copy())
+    db = DBSCAN(eps=eps, min_samples=3).fit(X.copy())
     core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
     core_samples_mask[db.core_sample_indices_] = True
     labels = db.labels_
@@ -61,8 +61,8 @@ def dbscan_cluster(X, shape_m):
     # clusters_matrix = np.flip(clusters_matrix)
     out_matrix = some_scaling(clusters_matrix)
 
-    cv.namedWindow(f'db_scan_cluster', cv.WINDOW_NORMAL)
-    cv.imshow(f'db_scan_cluster', out_matrix.astype(np.uint8))
+    cv.namedWindow(f'db_scan_cluster_ {eps}', cv.WINDOW_NORMAL)
+    cv.imshow(f'db_scan_cluster_ {eps}', out_matrix.astype(np.uint8))
 
     # #############################################################################
     # Plot result
