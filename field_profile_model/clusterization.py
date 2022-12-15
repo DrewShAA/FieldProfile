@@ -155,7 +155,7 @@ def run_agglomerative_clusterization(x, shape_m, n_clusters, distance=None) -> n
     # mean_shift(x, shape_m)
 
 
-def run_agglomerative_clusterization(x, shape_m, num_of_clust=3):
+def clustering(x, shape_m, num_of_clust=3):
     ward = AgglomerativeClustering(n_clusters=num_of_clust, linkage='ward')
     ward.fit(x)
 
