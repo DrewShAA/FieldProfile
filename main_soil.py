@@ -138,9 +138,27 @@ def main(opt):
     calculate_distance(points)
 
     profile, list_to_cluster, matrix_points, matrix_in_m = create_matrix(points)
+    print(matrix_in_m[..., -1])
 
-    matrix_clust, clusts = clusterization.run_agglomerative_clusterization(list_to_cluster, profile.shape[:2],
-                                                                           number_of_clusters)
+    coeffs_matrix = clusterization.Coefficient(matrix_in_m[..., -1], matrix_in_m)
+    euc_dists = coeffs_matrix.calculate_eucl_dist()
+    median_euc = statistics.median(euc_dists)
+    max_dist = max(euc_dists)
+    number_of_clusters = coeffs_matrix.calcul_second_hypothesis()
+    # number_of_clusters = 6
+    # clusterization.run_agglomerative_clusterization(list_to_cluster, profile.shape[:2], number_of_clusters,
+    #                                                 math.sqrt(coeffs_matrix.avg_err))
+
+    clusterization.run_agglomerative_clusterization(list_to_cluster, profile.shape[:2], number_of_clusters,
+                                                    2 * max_dist)
+
+    # clusterization.run_agglomerative_clusterization(list_to_cluster, profile.shape[:2], number_of_clusters)
+    clusterization.dbscan_cluster(list_to_cluster, profile.shape[:2],
+                                  math.sqrt(coeffs_matrix.avg_err))
+
+    matrix_clust, clusts = clusterization.clustering(list_to_cluster, profile.shape[:2], number_of_clusters)
+
+
     # clusterization.clustering(list_to_cluster, profile.shape[:2])
     # clusterization.dbscan_cluster(list_to_cluster, profile.shape[:2])
 
