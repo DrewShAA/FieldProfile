@@ -1,3 +1,9 @@
+import math
+import collections
+import operator
+import random
+from typing import List
+
 import matplotlib.pyplot as plt
 import cv2 as cv
 import numpy as np
@@ -9,6 +15,7 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import StandardScaler
 import sys
 from pathlib import Path
+import statistics
 
 if Path(__file__).absolute().parents[0].as_posix() not in sys.path:
     sys.path.append(Path(__file__).absolute().parents[0].as_posix())
@@ -114,30 +121,36 @@ def mean_shift(X, shape_m):
     cv.imshow('mean_shift', out_matrix.astype(np.uint8))
 
 
-def clustering(x, shape_m) -> np.ndarray:
-    type_aggl_clust = ['ward', 'complete', 'average']
-    for type_a in type_aggl_clust:
-        for n_clusters in range(3, 10):
-            ward = AgglomerativeClustering(n_clusters=n_clusters, linkage=type_a)
-            ward.fit(x)
+def run_agglomerative_clusterization(x, shape_m, n_clusters, distance=None) -> np.ndarray:
+    # type_aggl_clust = ['ward', 'complete', 'average']
+    # for type_a in type_aggl_clust:
+    #     for n_clusters in range(3, 10):
+    #         ward = AgglomerativeClustering(n_clusters=n_clusters, linkage=type_a)
+    #         ward.fit(x)
+    #
+    #         clusters_matrix = ward.labels_.reshape(shape_m).astype(np.float64)  # * 255
+    #         # clusters_matrix = np.flip(clusters_matrix)
+    #         out_matrix = some_scaling(clusters_matrix)
+    #
+    #         cv.namedWindow(type_a + str(n_clusters), cv.WINDOW_NORMAL)
+    #         cv.imshow(type_a + str(n_clusters), out_matrix.astype(np.uint8))
 
-            clusters_matrix = ward.labels_.reshape(shape_m).astype(np.float64)  # * 255
-            # clusters_matrix = np.flip(clusters_matrix)
-            out_matrix = some_scaling(clusters_matrix)
-
-            cv.namedWindow(type_a + str(n_clusters), cv.WINDOW_NORMAL)
-            cv.imshow(type_a + str(n_clusters), out_matrix.astype(np.uint8))
-
-    ward = AgglomerativeClustering(n_clusters=7, linkage='ward')
+    ward = AgglomerativeClustering(n_clusters=None if distance is not None else n_clusters,
+                                   distance_threshold=distance,
+                                   linkage='average')
     ward.fit(x)
 
     clusters_matrix = ward.labels_.reshape(shape_m).astype(np.float64)  # * 255
+    p_n = str(distance)
+    cv.namedWindow('AC: '+p_n, cv.WINDOW_NORMAL)
+    cv.imshow('AC: '+p_n, clusters_matrix.astype(np.uint8))
+    scale_mtrx = some_scaling(clusters_matrix)
 
-    cv.namedWindow('temp', cv.WINDOW_NORMAL)
-    cv.imshow('temp', clusters_matrix.astype(np.uint8))
+    cv.namedWindow('AC_scale: '+p_n, cv.WINDOW_NORMAL)
+    cv.imshow('AC_scale: '+p_n, scale_mtrx.astype(np.uint8))
 
-    print("out", clusters_matrix)
-    print('clusters:',set(ward.labels_))
+    # print("out", clusters_matrix)
+    print(f'clusters for distance_threshold = {p_n}', len(list(set(ward.labels_))))
 
     # mean_shift(x, shape_m)
 
